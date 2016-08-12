@@ -1,0 +1,18 @@
+fip-worker:
+  image: registry.cn-hangzhou.aliyuncs.com/jamlee/float-ip-worker:v1.0.1
+  volumes:
+    - /var/run/docker:/var/run/docker
+  net: host
+  privileged: true
+  command: -d
+  labels:
+      io.rancher.sidekicks: metadata-confd
+      io.rancher.scheduler.global: true
+
+metadata-confd:
+  image: registry.cn-hangzhou.aliyuncs.com/jamlee/meta-confd:v1.0.1
+  volumes:
+    - /var/run/docker:/var/run/docker
+  privileged: true
+  labels:
+      io.rancher.scheduler.global: true
