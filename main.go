@@ -5,6 +5,7 @@ import (
 	"time"
 	"os/signal"
 	"sync"
+	"syscall"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -56,15 +57,19 @@ func Run(ctx *cli.Context) error {
 	
 	//cleaner
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, os.Kill) 
-	go func(){
+	//The main process inside the container will receive SIGTERM, and after a grace period, SIGKILL.
+	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM) 
+	cleanUp := func(){
 		<- c
 		iptablesMutex.Lock()
 		clearIPtables(linkName, *mainAddr)
 		iptablesMutex.Unlock()
 		os.Exit(0)
-	}()
-
+	}
+	//cleanup for pinic 
+	defer cleanUp()
+	go cleanUp()
+	
 	for {
 		iptablesMutex.Lock()
 		iptablesMaintainer(linkName, *mainAddr)
