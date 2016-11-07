@@ -1,8 +1,8 @@
 .catalog:
-  name: EMC-Floating-IP
+  name: Floating-IP
   version: v0.1
   description: |
-    EMC Docker Floating IP
+    Docker Floating IP
   maintainer: "Jam Lee <jamlee@jamlee.cn>"
 
 floating-ip-worker:
